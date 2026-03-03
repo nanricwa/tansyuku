@@ -36,19 +36,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === '2') {
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]);
 
-            // テーブル作成
-            $schema = file_get_contents(__DIR__ . '/schema.sql');
-            // CREATE DATABASE と USE 文を除去（既に処理済み）
-            $schema = preg_replace('/CREATE DATABASE.*?;/s', '', $schema);
-            $schema = preg_replace('/USE .*?;/s', '', $schema);
-            // INSERT文のプレースホルダー管理者データを除去
-            $schema = preg_replace("/INSERT INTO users.*?;/s", '', $schema);
-
-            // 各SQL文を実行
-            $statements = array_filter(array_map('trim', explode(';', $schema)));
-            foreach ($statements as $sql) {
-                if (!empty($sql) && !preg_match('/^\s*--/', $sql)) {
-                    $pdo->exec($sql);
+            // テーブル作成（1行ずつ読み、コメント除去してSQL文を組み立て）
+            $lines = file(__DIR__ . '/schema.sql', FILE_IGNORE_NEW_LINES);
+            $sql = '';
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                // 空行・コメント行をスキップ
+                if ($trimmed === '' || strpos($trimmed, '--') === 0) {
+                    continue;
+                }
+                $sql .= $line . "\n";
+                // セミコロンで終わったら実行
+                if (substr($trimmed, -1) === ';') {
+                    $sql = trim($sql);
+                    // CREATE DATABASE / USE / INSERT INTO users は除外
+                    if (!preg_match('/^(CREATE DATABASE|USE )/i', $sql)) {
+                        $pdo->exec($sql);
+                    }
+                    $sql = '';
                 }
             }
 
