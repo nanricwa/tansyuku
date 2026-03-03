@@ -1,0 +1,89 @@
+/* 短縮URLツール カスタムスタイル */
+
+/* サイドバー */
+#sidebar-wrapper {
+    transition: margin-left 0.25s ease;
+}
+
+#sidebar-wrapper .list-group-item.active {
+    background-color: #495057 !important;
+    border-color: #495057;
+}
+
+#sidebar-wrapper .list-group-item:hover:not(.active) {
+    background-color: #343a40 !important;
+}
+
+/* サイドバー折りたたみ */
+body.sidebar-collapsed #sidebar-wrapper {
+    margin-left: -220px;
+}
+
+/* ログイン画面 */
+.login-container {
+    max-width: 420px;
+    margin: 80px auto;
+}
+
+.login-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+.login-card .card-body {
+    padding: 2.5rem;
+}
+
+/* テーブル */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.04);
+}
+
+/* カード統計 */
+.stat-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card .stat-icon {
+    font-size: 2rem;
+    opacity: 0.7;
+}
+
+/* クリップボードコピーボタン */
+.btn-copy {
+    cursor: pointer;
+    padding: 2px 6px;
+    font-size: 0.85rem;
+}
+
+.btn-copy.copied {
+    color: #198754;
+}
+
+/* 解析グラフ */
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: -220px;
+    }
+    body.sidebar-shown #sidebar-wrapper {
+        margin-left: 0;
+    }
+    .login-container {
+        margin: 40px auto;
+        padding: 0 16px;
+    }
+}

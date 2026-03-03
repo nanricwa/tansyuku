@@ -1,0 +1,26 @@
+RewriteEngine On
+RewriteBase /url/
+
+# 管理画面・静的ファイル・APIはそのまま通す
+RewriteCond %{REQUEST_URI} ^/url/admin/ [OR]
+RewriteCond %{REQUEST_URI} ^/url/api/ [OR]
+RewriteCond %{REQUEST_URI} ^/url/assets/ [OR]
+RewriteCond %{REQUEST_URI} ^/url/includes/ [OR]
+RewriteCond %{REQUEST_URI} ^/url/templates/ [OR]
+RewriteCond %{REQUEST_URI} ^/url/vendor/ [OR]
+RewriteCond %{REQUEST_URI} ^/url/install/
+RewriteRule ^ - [L]
+
+# 実ファイル/ディレクトリが存在する場合はそのまま
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 拡張子付き (.htm, .html) のリクエスト
+RewriteRule ^(.+?)\.(htm|html)$ index.php?slug=$1&ext=$2 [L,QSA]
+
+# ディレクトリ風 (末尾スラッシュ)
+RewriteRule ^(.+)/$ index.php?slug=$1&ext=dir [L,QSA]
+
+# それ以外
+RewriteRule ^(.+)$ index.php?slug=$1 [L,QSA]
