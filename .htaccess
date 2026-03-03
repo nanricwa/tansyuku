@@ -8,7 +8,8 @@ RewriteCond %{REQUEST_URI} ^/intro/assets/ [OR]
 RewriteCond %{REQUEST_URI} ^/intro/includes/ [OR]
 RewriteCond %{REQUEST_URI} ^/intro/templates/ [OR]
 RewriteCond %{REQUEST_URI} ^/intro/vendor/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/install/
+RewriteCond %{REQUEST_URI} ^/intro/install/ [OR]
+RewriteCond %{REQUEST_URI} ^/intro/cv\.php
 RewriteRule ^ - [L]
 
 # 実ファイル/ディレクトリが存在する場合はそのまま

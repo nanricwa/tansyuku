@@ -116,7 +116,7 @@ function generateRandomSlug(int $length = 8): string
 function isSlugAvailable(string $slug, ?int $excludeId = null): bool
 {
     $db = Database::getConnection();
-    $reservedSlugs = ['admin', 'api', 'assets', 'includes', 'templates', 'install', 'vendor', 'data'];
+    $reservedSlugs = ['admin', 'api', 'assets', 'includes', 'templates', 'install', 'vendor', 'data', 'cv'];
 
     if (in_array(strtolower($slug), $reservedSlugs)) {
         return false;

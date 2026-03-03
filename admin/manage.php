@@ -236,6 +236,13 @@ function sortLink(string $column, string $label): string
                             <a href="<?= BASE_PATH ?>/admin/edit.php?id=<?= $url['id'] ?>" class="btn btn-outline-secondary" title="編集">
                                 <i class="bi bi-pencil"></i>
                             </a>
+                            <?php
+                            $baseUrl = Database::getSetting('base_url', 'https://example.com/intro');
+                            $cvTag = '<img src="' . $baseUrl . '/cv.php?slug=' . h($url['slug']) . '" width="1" height="1" style="display:none" alt="">';
+                            ?>
+                            <button class="btn btn-outline-warning btn-copy" data-copy="<?= h($cvTag) ?>" title="CVタグをコピー">
+                                <i class="bi bi-tag"></i>
+                            </button>
                             <form method="post" class="d-inline" onsubmit="return confirm('このURLを削除しますか？');">
                                 <?= Csrf::tokenField() ?>
                                 <input type="hidden" name="delete_id" value="<?= $url['id'] ?>">

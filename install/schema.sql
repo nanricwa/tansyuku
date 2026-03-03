@@ -32,6 +32,8 @@ CREATE TABLE `groups` (
     rules_json TEXT,
     redirect_method VARCHAR(50) NOT NULL DEFAULT 'jump',
     memo TEXT,
+    is_locked TINYINT(1) NOT NULL DEFAULT 0,
+    locked_destination_id INT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -40,6 +42,7 @@ CREATE TABLE group_destinations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     group_id INT NOT NULL,
     destination_url TEXT NOT NULL,
+    label VARCHAR(10) NOT NULL DEFAULT '',
     weight INT NOT NULL DEFAULT 1,
     FOREIGN KEY (group_id) REFERENCES `groups`(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -73,6 +76,7 @@ CREATE TABLE urls (
 CREATE TABLE clicks (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     url_id INT NOT NULL,
+    destination_id INT NULL,
     clicked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ip_address VARCHAR(45) NOT NULL DEFAULT '',
     user_agent VARCHAR(500) NOT NULL DEFAULT '',
@@ -86,7 +90,8 @@ CREATE TABLE clicks (
     is_unique TINYINT(1) NOT NULL DEFAULT 0,
     FOREIGN KEY (url_id) REFERENCES urls(id) ON DELETE CASCADE,
     INDEX idx_url_clicked (url_id, clicked_at),
-    INDEX idx_clicked_at (clicked_at)
+    INDEX idx_clicked_at (clicked_at),
+    INDEX idx_destination_id (destination_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- コンバージョン
@@ -94,9 +99,11 @@ CREATE TABLE conversions (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     url_id INT NOT NULL,
     click_id BIGINT NULL,
+    destination_id INT NULL,
     converted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (url_id) REFERENCES urls(id) ON DELETE CASCADE,
-    FOREIGN KEY (click_id) REFERENCES clicks(id) ON DELETE SET NULL
+    FOREIGN KEY (click_id) REFERENCES clicks(id) ON DELETE SET NULL,
+    INDEX idx_destination_id (destination_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 設定

@@ -167,6 +167,43 @@ include __DIR__ . '/../templates/header.php';
     </div>
 </div>
 
+<!-- CVタグ（コンバージョン計測タグ） -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <i class="bi bi-tag me-1"></i>CVタグ（コンバージョン計測タグ）
+        <small class="text-muted ms-2">成約ページ（サンクスページ等）に貼り付けてください</small>
+    </div>
+    <div class="card-body">
+        <?php
+        $baseUrl = Database::getSetting('base_url', 'https://example.com/intro');
+        $cvPixelTag = '<img src="' . $baseUrl . '/cv.php?slug=' . h($url['slug']) . '" width="1" height="1" style="display:none" alt="">';
+        $cvJsTag = '<script src="' . $baseUrl . '/cv.php?slug=' . h($url['slug']) . '&format=js"></script>';
+        ?>
+        <div class="mb-3">
+            <label class="form-label fw-bold small">HTMLピクセル方式 <span class="badge bg-success">推奨</span></label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control font-monospace" id="cv-pixel-tag"
+                       value="<?= h($cvPixelTag) ?>" readonly>
+                <button class="btn btn-outline-primary btn-copy" type="button" data-copy="<?= h($cvPixelTag) ?>">
+                    <i class="bi bi-clipboard me-1"></i>コピー
+                </button>
+            </div>
+            <small class="text-muted">1x1の透明画像です。ほとんどのHTMLページで動作します。</small>
+        </div>
+        <div>
+            <label class="form-label fw-bold small">JavaScript方式</label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control font-monospace" id="cv-js-tag"
+                       value="<?= h($cvJsTag) ?>" readonly>
+                <button class="btn btn-outline-primary btn-copy" type="button" data-copy="<?= h($cvJsTag) ?>">
+                    <i class="bi bi-clipboard me-1"></i>コピー
+                </button>
+            </div>
+            <small class="text-muted">JavaScriptが使える環境向け。DOM要素にステータスを書き込みます。</small>
+        </div>
+    </div>
+</div>
+
 <!-- 編集フォーム -->
 <div class="card">
     <div class="card-body">

@@ -11,8 +11,11 @@ class ClickTracker
 {
     /**
      * クリックを記録
+     * @param int $urlId URL ID
+     * @param int|null $destinationId グループ振り分け先のID（A/Bテスト用）
+     * @return int|null 挿入されたクリックID（記録された場合）
      */
-    public static function track(int $urlId): void
+    public static function track(int $urlId, ?int $destinationId = null): ?int
     {
         $db = Database::getConnection();
 
@@ -26,7 +29,7 @@ class ClickTracker
                 session_start();
             }
             if (isset($_SESSION['user_id'])) {
-                return;
+                return null;
             }
         }
 
@@ -41,11 +44,12 @@ class ClickTracker
         $isUnique = self::isUniqueClick($urlId, $ip, $ua);
 
         $stmt = $db->prepare(
-            'INSERT INTO clicks (url_id, ip_address, user_agent, referer, referer_domain, referer_type, device_type, os, browser, region, is_unique)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO clicks (url_id, destination_id, ip_address, user_agent, referer, referer_domain, referer_type, device_type, os, browser, region, is_unique)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $urlId,
+            $destinationId,
             $ip,
             mb_substr($ua, 0, 500),
             mb_substr($referer, 0, 1000),
@@ -57,6 +61,8 @@ class ClickTracker
             '', // 地域は後でGeoIPで対応
             $isUnique ? 1 : 0,
         ]);
+
+        return (int)$db->lastInsertId();
     }
 
     /**
