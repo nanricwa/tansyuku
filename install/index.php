@@ -30,15 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === '2') {
         $error = '管理者パスワードは8文字以上にしてください。';
     } else {
         try {
-            // DB接続テスト
-            $dsn = "mysql:host={$dbHost};charset=utf8mb4";
+            // DB接続（Xserver等では事前にDB作成済みのため、直接接続）
+            $dsn = "mysql:host={$dbHost};dbname={$dbName};charset=utf8mb4";
             $pdo = new PDO($dsn, $dbUser, $dbPass, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             ]);
-
-            // DB作成
-            $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            $pdo->exec("USE `{$dbName}`");
 
             // テーブル作成
             $schema = file_get_contents(__DIR__ . '/schema.sql');
@@ -89,7 +85,7 @@ define('DB_CHARSET', 'utf8mb4');
 
 define('APP_NAME', 'URL Shortener');
 define('APP_VERSION', '1.0.0');
-define('BASE_PATH', '/url');
+define('BASE_PATH', " . var_export(parse_url($baseUrl, PHP_URL_PATH) ?: '/url', true) . ");
 
 define('SESSION_LIFETIME', 3600);
 define('SESSION_NAME', 'urlshortener_session');
@@ -159,7 +155,7 @@ mb_internal_encoding('UTF-8');
                     <div class="col-md-6">
                         <label class="form-label">データベース名 <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="db_name"
-                               value="<?= htmlspecialchars($_POST['db_name'] ?? 'url_shortener') ?>" required>
+                               value="<?= htmlspecialchars($_POST['db_name'] ?? 'ctwasia2_tansyuku') ?>" required>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -181,7 +177,7 @@ mb_internal_encoding('UTF-8');
                 <div class="mb-3">
                     <label class="form-label">ベースURL <span class="text-danger">*</span></label>
                     <input type="url" class="form-control" name="base_url"
-                           value="<?= htmlspecialchars($_POST['base_url'] ?? 'https://') ?>"
+                           value="<?= htmlspecialchars($_POST['base_url'] ?? 'https://ycscampaign.com/intro') ?>"
                            placeholder="https://example.com/url" required>
                     <div class="form-text">短縮URLのベースとなるURL（末尾スラッシュなし）</div>
                 </div>

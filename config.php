@@ -4,7 +4,7 @@
  */
 
 // エラー表示（本番ではfalseに）
-define('DEBUG_MODE', true);
+define('DEBUG_MODE', false);
 
 if (DEBUG_MODE) {
     error_reporting(E_ALL);
@@ -16,15 +16,15 @@ if (DEBUG_MODE) {
 
 // DB接続情報
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'url_shortener');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'ctwasia2_tansyuku');
+define('DB_USER', 'ctwasia2_nan');
+define('DB_PASS', 'panda5435');
 define('DB_CHARSET', 'utf8mb4');
 
 // アプリケーション設定
 define('APP_NAME', 'URL Shortener');
 define('APP_VERSION', '1.0.0');
-define('BASE_PATH', '/url');
+define('BASE_PATH', '/intro');
 
 // セッション設定
 define('SESSION_LIFETIME', 3600); // 1時間

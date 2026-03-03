@@ -1,8 +1,9 @@
 -- 短縮URLツール データベーススキーマ
 -- MariaDB / MySQL
 
-CREATE DATABASE IF NOT EXISTS url_shortener CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE url_shortener;
+-- Xserver等では事前にコントロールパネルでDB作成済みのため、以下はコメントアウト
+-- CREATE DATABASE IF NOT EXISTS url_shortener CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE url_shortener;
 
 -- ユーザー
 CREATE TABLE users (
@@ -119,7 +120,7 @@ CREATE TABLE audit_logs (
 
 -- 初期設定データ
 INSERT INTO settings (setting_key, setting_value) VALUES
-('base_url', 'https://example.com/url'),
+('base_url', 'https://ycscampaign.com/intro'),
 ('default_slug_type', 'custom'),
 ('default_redirect_type', 'jump'),
 ('clipboard_format', '/xxx.html'),
@@ -127,6 +128,4 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 ('allow_anonymous_create', '0'),
 ('exclude_own_clicks', '0');
 
--- 初期管理者アカウント (パスワード: admin123 → デプロイ時に必ず変更)
-INSERT INTO users (username, email, password_hash, role)
-VALUES ('admin', 'admin@example.com', '$2y$10$placeholder_hash_change_me', 'admin');
+-- 管理者アカウントはインストーラー（install/index.php）で作成してください

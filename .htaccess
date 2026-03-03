@@ -1,14 +1,14 @@
 RewriteEngine On
-RewriteBase /url/
+RewriteBase /intro/
 
 # 管理画面・静的ファイル・APIはそのまま通す
-RewriteCond %{REQUEST_URI} ^/url/admin/ [OR]
-RewriteCond %{REQUEST_URI} ^/url/api/ [OR]
-RewriteCond %{REQUEST_URI} ^/url/assets/ [OR]
-RewriteCond %{REQUEST_URI} ^/url/includes/ [OR]
-RewriteCond %{REQUEST_URI} ^/url/templates/ [OR]
-RewriteCond %{REQUEST_URI} ^/url/vendor/ [OR]
-RewriteCond %{REQUEST_URI} ^/url/install/
+RewriteCond %{REQUEST_URI} ^/intro/admin/ [OR]
+RewriteCond %{REQUEST_URI} ^/intro/api/ [OR]
+RewriteCond %{REQUEST_URI} ^/intro/assets/ [OR]
+RewriteCond %{REQUEST_URI} ^/intro/includes/ [OR]
+RewriteCond %{REQUEST_URI} ^/intro/templates/ [OR]
+RewriteCond %{REQUEST_URI} ^/intro/vendor/ [OR]
+RewriteCond %{REQUEST_URI} ^/intro/install/
 RewriteRule ^ - [L]
 
 # 実ファイル/ディレクトリが存在する場合はそのまま
