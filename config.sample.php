@@ -16,9 +16,9 @@ if (DEBUG_MODE) {
 
 // DB接続情報
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'ctwasia2_tansyuku');
-define('DB_USER', 'ctwasia2_nan');
-define('DB_PASS', 'panda5435');
+define('DB_NAME', 'your_db_name');
+define('DB_USER', 'your_db_user');
+define('DB_PASS', 'your_db_password');
 define('DB_CHARSET', 'utf8mb4');
 
 // アプリケーション設定
