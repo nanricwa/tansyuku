@@ -4,11 +4,11 @@
  */
 
 /**
- * HTMLエスケープ
+ * HTMLエスケープ（null-safe: PHP 8.4対応）
  */
-function h(string $str): string
+function h(?string $str): string
 {
-    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars($str ?? '', ENT_QUOTES, 'UTF-8');
 }
 
 /**
@@ -16,9 +16,9 @@ function h(string $str): string
  * @をHTMLエンティティ &#64; にエンコードしてCloudflare/Xserverのメール保護を回避
  * ブラウザは正しく@として表示し、フォーム送信時も正しい値が送られる
  */
-function safeEmail(string $email): string
+function safeEmail(?string $email): string
 {
-    return str_replace('@', '&#64;', htmlspecialchars($email, ENT_QUOTES, 'UTF-8'));
+    return str_replace('@', '&#64;', htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'));
 }
 
 /**
