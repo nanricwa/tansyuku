@@ -151,7 +151,7 @@ include __DIR__ . '/../templates/header.php';
                     <tr>
                         <td><?= h($link['member_name']) ?></td>
                         <td><code><?= h($link['member_code']) ?></code></td>
-                        <td class="small"><?= h($link['member_email']) ?></td>
+                        <td class="small"><?= safeEmail($link['member_email']) ?></td>
                         <td>
                             <input type="text" class="form-control form-control-sm font-monospace generated-link"
                                    value="<?= h($link['url']) ?>" readonly>
@@ -177,7 +177,7 @@ include __DIR__ . '/../templates/header.php';
     <div class="card-body">
         <textarea class="form-control font-monospace small" rows="6" readonly id="csvOutput"><?php
 foreach ($generatedLinks as $link) {
-    echo h($link['member_name']) . "\t" . h($link['member_code']) . "\t" . h($link['member_email']) . "\t" . h($link['url']) . "\n";
+    echo h($link['member_name']) . "\t" . h($link['member_code']) . "\t" . safeEmail($link['member_email']) . "\t" . h($link['url']) . "\n";
 }
 ?></textarea>
         <button class="btn btn-sm btn-outline-secondary mt-2" onclick="navigator.clipboard.writeText(document.getElementById('csvOutput').value)">

@@ -12,6 +12,16 @@ function h(string $str): string
 }
 
 /**
+ * メールアドレスを安全に出力（サーバーサイドのメール難読化フィルタ回避）
+ * @をHTMLエンティティ &#64; にエンコードしてCloudflare/Xserverのメール保護を回避
+ * ブラウザは正しく@として表示し、フォーム送信時も正しい値が送られる
+ */
+function safeEmail(string $email): string
+{
+    return str_replace('@', '&#64;', htmlspecialchars($email, ENT_QUOTES, 'UTF-8'));
+}
+
+/**
  * スラッグ生成: index+アルファベット方式
  * 例: indexab, indexac, ...
  */

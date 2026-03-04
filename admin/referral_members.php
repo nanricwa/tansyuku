@@ -205,7 +205,7 @@ include __DIR__ . '/../templates/header.php';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">メール</label>
-                        <input type="email" class="form-control" name="email" placeholder="tanaka@example.com">
+                        <input type="email" class="form-control" name="email" placeholder="tanaka&#64;example.com">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">グループ</label>
@@ -229,7 +229,7 @@ include __DIR__ . '/../templates/header.php';
                     形式: <code>名前,紹介コード,メール,グループ</code>（1行1件、メール・グループは省略可）
                 </div>
                 <textarea class="form-control font-monospace mb-2" name="csv_text" rows="5"
-                          placeholder="田中太郎,TANAKA,tanaka@example.com,東京&#10;鈴木花子,SUZUKI,suzuki@example.com,大阪"></textarea>
+                          placeholder="田中太郎,TANAKA,tanaka&#64;example.com,東京&#10;鈴木花子,SUZUKI,suzuki&#64;example.com,大阪"></textarea>
                 <button type="submit" class="btn btn-outline-primary btn-sm">
                     <i class="bi bi-upload me-1"></i>一括追加
                 </button>
@@ -291,7 +291,7 @@ include __DIR__ . '/../templates/header.php';
             <tr>
                 <td class="fw-bold"><?= h($m['name']) ?></td>
                 <td><code><?= h($m['code']) ?></code></td>
-                <td class="small"><?= h($m['email']) ?></td>
+                <td class="small"><?= safeEmail($m['email']) ?></td>
                 <td class="small"><?= h($m['group_label'] ?: '-') ?></td>
                 <td class="text-center"><?= number_format($m['visit_count']) ?></td>
                 <td class="text-center"><?= number_format($m['unique_count']) ?></td>
@@ -357,7 +357,7 @@ include __DIR__ . '/../templates/header.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">メール</label>
-                        <input type="email" class="form-control" name="email" value="<?= h($m['email']) ?>">
+                        <input type="email" class="form-control" name="email" value="<?= safeEmail($m['email']) ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">グループ</label>

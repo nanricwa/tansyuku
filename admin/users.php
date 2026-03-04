@@ -150,7 +150,7 @@ include __DIR__ . '/../templates/header.php';
                 <tr>
                     <td><?= $u['id'] ?></td>
                     <td><strong><?= h($u['username']) ?></strong></td>
-                    <td><?= h($u['email']) ?></td>
+                    <td><?= safeEmail($u['email']) ?></td>
                     <td><span class="badge bg-<?= $u['role'] === 'admin' ? 'danger' : 'secondary' ?>"><?= h($u['role']) ?></span></td>
                     <td><?= $u['url_count'] ?></td>
                     <td>
@@ -191,7 +191,7 @@ include __DIR__ . '/../templates/header.php';
                                 <div class="modal-body">
                                     <div class="mb-3">
                                         <label class="form-label">メールアドレス</label>
-                                        <input type="email" class="form-control" name="email" value="<?= h($u['email']) ?>">
+                                        <input type="email" class="form-control" name="email" value="<?= safeEmail($u['email']) ?>">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">権限</label>
