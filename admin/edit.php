@@ -176,11 +176,28 @@ include __DIR__ . '/../templates/header.php';
     <div class="card-body">
         <?php
         $baseUrl = Database::getSetting('base_url', 'https://example.com/intro');
+        $cvCommonTag = '<img src="' . $baseUrl . '/cv.php" width="1" height="1" style="display:none" alt="">';
         $cvPixelTag = '<img src="' . $baseUrl . '/cv.php?slug=' . h($url['slug']) . '" width="1" height="1" style="display:none" alt="">';
-        $cvJsTag = '<script src="' . $baseUrl . '/cv.php?slug=' . h($url['slug']) . '&format=js"></script>';
+        $cvJsTag = '<script src="' . $baseUrl . '/cv.php?format=js"></script>';
         ?>
         <div class="mb-3">
-            <label class="form-label fw-bold small">HTMLピクセル方式 <span class="badge bg-success">推奨</span></label>
+            <label class="form-label fw-bold small">
+                共通CVタグ <span class="badge bg-success">推奨</span>
+            </label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control font-monospace"
+                       value="<?= h($cvCommonTag) ?>" readonly>
+                <button class="btn btn-outline-primary btn-copy" type="button" data-copy="<?= h($cvCommonTag) ?>">
+                    <i class="bi bi-clipboard me-1"></i>コピー
+                </button>
+            </div>
+            <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>タグ1つで全短縮URLに対応。IP+UAから直近のクリックを自動判定して成約を記録します。
+                複数チャネルから同じサンクスページに来る場合はこちらが便利です。
+            </small>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold small">個別CVタグ（このURLのみ計測）</label>
             <div class="input-group input-group-sm">
                 <input type="text" class="form-control font-monospace" id="cv-pixel-tag"
                        value="<?= h($cvPixelTag) ?>" readonly>
@@ -188,10 +205,10 @@ include __DIR__ . '/../templates/header.php';
                     <i class="bi bi-clipboard me-1"></i>コピー
                 </button>
             </div>
-            <small class="text-muted">1x1の透明画像です。ほとんどのHTMLページで動作します。</small>
+            <small class="text-muted">このURLのクリック経由のみ計測する場合に使用します。</small>
         </div>
         <div>
-            <label class="form-label fw-bold small">JavaScript方式</label>
+            <label class="form-label fw-bold small">JavaScript方式（共通）</label>
             <div class="input-group input-group-sm">
                 <input type="text" class="form-control font-monospace" id="cv-js-tag"
                        value="<?= h($cvJsTag) ?>" readonly>
