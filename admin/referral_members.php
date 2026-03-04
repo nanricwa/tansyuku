@@ -303,7 +303,7 @@ include __DIR__ . '/../templates/header.php';
                     <?= $m['is_active'] ? '<span class="badge bg-success">有効</span>' : '<span class="badge bg-secondary">無効</span>' ?>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
                             data-bs-target="#editMember<?= $m['id'] ?>">
                         <i class="bi bi-pencil"></i>
                     </button>
