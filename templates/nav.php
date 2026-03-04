@@ -10,6 +10,9 @@ $currentPage = basename($_SERVER['SCRIPT_NAME'], '.php');
            class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'dashboard' ? 'active' : '' ?>">
             <i class="bi bi-speedometer2 me-2"></i>ダッシュボード
         </a>
+
+        <!-- 短縮URL -->
+        <div class="px-3 pt-3 pb-1 text-secondary small text-uppercase fw-bold">短縮URL</div>
         <a href="<?= BASE_PATH ?>/admin/create.php"
            class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'create' ? 'active' : '' ?>">
             <i class="bi bi-plus-circle me-2"></i>URL作成
@@ -34,10 +37,32 @@ $currentPage = basename($_SERVER['SCRIPT_NAME'], '.php');
            class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'categories' ? 'active' : '' ?>">
             <i class="bi bi-tags me-2"></i>カテゴリ
         </a>
+
+        <!-- 紹介 -->
+        <div class="px-3 pt-3 pb-1 text-secondary small text-uppercase fw-bold">紹介</div>
+        <a href="<?= BASE_PATH ?>/admin/referral_campaigns.php"
+           class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'referral_campaigns' ? 'active' : '' ?>">
+            <i class="bi bi-megaphone me-2"></i>キャンペーン
+        </a>
+        <a href="<?= BASE_PATH ?>/admin/referral_members.php"
+           class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'referral_members' ? 'active' : '' ?>">
+            <i class="bi bi-people me-2"></i>紹介者
+        </a>
+        <a href="<?= BASE_PATH ?>/admin/referral_links.php"
+           class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'referral_links' ? 'active' : '' ?>">
+            <i class="bi bi-link-45deg me-2"></i>リンク生成
+        </a>
+        <a href="<?= BASE_PATH ?>/admin/referral_analytics.php"
+           class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'referral_analytics' ? 'active' : '' ?>">
+            <i class="bi bi-bar-chart me-2"></i>紹介分析
+        </a>
+
+        <!-- システム -->
+        <div class="px-3 pt-3 pb-1 text-secondary small text-uppercase fw-bold">システム</div>
         <?php if (Auth::isAdmin()): ?>
         <a href="<?= BASE_PATH ?>/admin/users.php"
            class="list-group-item list-group-item-action bg-dark text-white border-secondary <?= $currentPage === 'users' ? 'active' : '' ?>">
-            <i class="bi bi-people me-2"></i>ユーザー管理
+            <i class="bi bi-person-gear me-2"></i>ユーザー管理
         </a>
         <?php endif; ?>
         <a href="<?= BASE_PATH ?>/admin/export.php?type=urls"

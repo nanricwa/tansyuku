@@ -9,8 +9,12 @@ RewriteCond %{REQUEST_URI} ^/intro/includes/ [OR]
 RewriteCond %{REQUEST_URI} ^/intro/templates/ [OR]
 RewriteCond %{REQUEST_URI} ^/intro/vendor/ [OR]
 RewriteCond %{REQUEST_URI} ^/intro/install/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/cv\.php
+RewriteCond %{REQUEST_URI} ^/intro/cv\.php [OR]
+RewriteCond %{REQUEST_URI} ^/intro/ref_cv\.php
 RewriteRule ^ - [L]
+
+# 紹介リダイレクト: /r/SLUG → ref.php?campaign=SLUG
+RewriteRule ^r/([a-zA-Z0-9_-]+)/?$ ref.php?campaign=$1 [L,QSA]
 
 # 実ファイル/ディレクトリが存在する場合はそのまま
 RewriteCond %{REQUEST_FILENAME} -f [OR]
