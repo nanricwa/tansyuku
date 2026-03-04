@@ -9,6 +9,7 @@
     <link href="<?= BASE_PATH ?>/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
+<!--email_off-->
 <div class="d-flex" id="wrapper">
     <?php include __DIR__ . '/nav.php'; ?>
     <div id="page-content-wrapper" class="w-100">
