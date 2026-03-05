@@ -161,7 +161,8 @@ $stmt = $db->prepare(
     "SELECT m.*,
      (SELECT COUNT(*) FROM ref_visits WHERE member_id = m.id) AS visit_count,
      (SELECT COUNT(*) FROM ref_visits WHERE member_id = m.id AND is_unique = 1) AS unique_count,
-     (SELECT COUNT(*) FROM ref_conversions WHERE member_id = m.id) AS cv_count
+     (SELECT COUNT(*) FROM ref_conversions WHERE member_id = m.id) AS cv_count,
+     (SELECT COUNT(*) FROM ref_issued_links WHERE member_id = m.id) AS issued_count
      FROM ref_members m {$whereClause}
      ORDER BY m.name
      LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}"
@@ -277,13 +278,14 @@ include __DIR__ . '/../templates/header.php';
                 <th class="text-center">ユニーク</th>
                 <th class="text-center">CV</th>
                 <th class="text-center">CV率</th>
+                <th class="text-center">発行URL</th>
                 <th>状態</th>
                 <th style="width:120px">操作</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($members)): ?>
-                <tr><td colspan="10" class="text-center text-muted py-4">紹介者がいません</td></tr>
+                <tr><td colspan="11" class="text-center text-muted py-4">紹介者がいません</td></tr>
             <?php endif; ?>
             <?php foreach ($members as $m):
                 $cvRate = $m['unique_count'] > 0 ? round($m['cv_count'] / $m['unique_count'] * 100, 1) : 0;
@@ -298,6 +300,14 @@ include __DIR__ . '/../templates/header.php';
                 <td class="text-center fw-bold"><?= number_format($m['cv_count']) ?></td>
                 <td class="text-center">
                     <span class="badge bg-<?= $cvRate > 0 ? 'info' : 'secondary' ?>"><?= $cvRate ?>%</span>
+                </td>
+                <td class="text-center">
+                    <?php if ($m['issued_count'] > 0): ?>
+                        <a href="#" class="text-decoration-none" data-bs-toggle="modal"
+                           data-bs-target="#issuedLinks<?= $m['id'] ?>"><?= $m['issued_count'] ?>件</a>
+                    <?php else: ?>
+                        <span class="text-muted">-</span>
+                    <?php endif; ?>
                 </td>
                 <td>
                     <?= $m['is_active'] ? '<span class="badge bg-success">有効</span>' : '<span class="badge bg-secondary">無効</span>' ?>
@@ -382,5 +392,56 @@ include __DIR__ . '/../templates/header.php';
     </div>
 </div>
 <?php endforeach; ?>
+
+<!-- 発行済みリンク詳細モーダル -->
+<?php foreach ($members as $m):
+    if ($m['issued_count'] > 0):
+        $issuedLinks = Referral::getIssuedLinks((int)$m['id']);
+?>
+<div class="modal fade" id="issuedLinks<?= $m['id'] ?>" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><?= h($m['name']) ?> の発行済みリンク</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>キャンペーン</th>
+                                <th>matchコード</th>
+                                <th>リンク</th>
+                                <th>状態</th>
+                                <th>発行日</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($issuedLinks as $il):
+                                $status = Referral::getLinkStatus($il);
+                            ?>
+                            <tr>
+                                <td><?= h($il['campaign_name']) ?></td>
+                                <td><code><?= h($il['match_code'] ?: '-') ?></code></td>
+                                <td>
+                                    <input type="text" class="form-control form-control-sm font-monospace"
+                                           value="<?= h($il['full_url']) ?>" readonly style="min-width:200px">
+                                </td>
+                                <td><span class="badge bg-<?= $status['color'] ?>"><?= $status['label'] ?></span></td>
+                                <td class="small"><?= date('Y/m/d', strtotime($il['issued_at'])) ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; endforeach; ?>
 
 <?php include __DIR__ . '/../templates/footer.php'; ?>

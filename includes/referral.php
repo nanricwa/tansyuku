@@ -151,6 +151,68 @@ class Referral
     }
 
     /**
+     * 発行済みリンクを記録（ON DUPLICATE KEY UPDATEで冪等）
+     */
+    public static function recordIssuedLink(int $campaignId, int $memberId,
+                                             string $matchCode, string $fullUrl, ?int $issuedBy = null): void
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare(
+            'INSERT INTO ref_issued_links (campaign_id, member_id, match_code, full_url, issued_at, issued_by)
+             VALUES (?, ?, ?, ?, NOW(), ?)
+             ON DUPLICATE KEY UPDATE full_url = VALUES(full_url), issued_at = NOW(), issued_by = VALUES(issued_by)'
+        );
+        $stmt->execute([$campaignId, $memberId, $matchCode, $fullUrl, $issuedBy]);
+    }
+
+    /**
+     * メンバーの発行済みリンク取得
+     */
+    public static function getIssuedLinks(int $memberId, ?int $campaignId = null): array
+    {
+        $db = Database::getConnection();
+        $sql = 'SELECT il.*, rc.name AS campaign_name, rc.slug AS campaign_slug,
+                       rc.is_active AS campaign_active, rc.starts_at, rc.ends_at,
+                       rm.is_active AS member_active
+                FROM ref_issued_links il
+                JOIN ref_campaigns rc ON il.campaign_id = rc.id
+                JOIN ref_members rm ON il.member_id = rm.id
+                WHERE il.member_id = ?';
+        $params = [$memberId];
+        if ($campaignId) {
+            $sql .= ' AND il.campaign_id = ?';
+            $params[] = $campaignId;
+        }
+        $sql .= ' ORDER BY il.issued_at DESC';
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * リンクのステータス判定
+     * @param array $link getIssuedLinks()の1行
+     * @return array ['label' => '有効', 'color' => 'success']
+     */
+    public static function getLinkStatus(array $link): array
+    {
+        if (!$link['member_active']) {
+            return ['label' => 'メンバー無効', 'color' => 'secondary'];
+        }
+        if (!$link['campaign_active']) {
+            return ['label' => 'CP無効', 'color' => 'danger'];
+        }
+        $now = date('Y-m-d H:i:s');
+        if (!empty($link['starts_at']) && $link['starts_at'] > $now) {
+            return ['label' => '未開始', 'color' => 'warning'];
+        }
+        if (!empty($link['ends_at']) && $link['ends_at'] < $now) {
+            return ['label' => '期限切れ', 'color' => 'secondary'];
+        }
+        return ['label' => '有効', 'color' => 'success'];
+    }
+
+    /**
      * クライアントIPアドレスを取得
      */
     public static function getClientIp(): string

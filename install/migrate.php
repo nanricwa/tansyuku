@@ -229,6 +229,30 @@ if (!columnExists($db, 'ref_campaigns', 'notify_on_cv')) {
 }
 
 // =============================================================================
+// Migration 004: 発行済み紹介リンク管理
+// =============================================================================
+
+if (!tableExists($db, 'ref_issued_links')) {
+    $db->exec("CREATE TABLE ref_issued_links (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        campaign_id INT NOT NULL,
+        member_id INT NOT NULL,
+        match_code VARCHAR(100) NOT NULL DEFAULT '',
+        full_url TEXT NOT NULL,
+        issued_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        issued_by INT NULL,
+        UNIQUE KEY uq_campaign_member_match (campaign_id, member_id, match_code),
+        FOREIGN KEY (campaign_id) REFERENCES ref_campaigns(id) ON DELETE CASCADE,
+        FOREIGN KEY (member_id) REFERENCES ref_members(id) ON DELETE CASCADE,
+        INDEX idx_member (member_id),
+        INDEX idx_issued_at (issued_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $results[] = '✅ ref_issued_links テーブルを作成しました';
+} else {
+    $results[] = '⏭ ref_issued_links は既に存在します';
+}
+
+// =============================================================================
 // 出力
 // =============================================================================
 

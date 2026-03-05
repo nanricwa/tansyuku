@@ -57,8 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        $issuedBy = $_SESSION['user_id'] ?? null;
         foreach ($targetMembers as $member) {
             $url = Referral::buildReferralUrl($campaign['slug'], $member['code'], $matchCode);
+            Referral::recordIssuedLink((int)$campaign['id'], (int)$member['id'], $matchCode, $url, $issuedBy);
             $generatedLinks[] = [
                 'member_name' => $member['name'],
                 'member_code' => $member['code'],
@@ -195,6 +197,60 @@ function copyAllLinks() {
     });
 }
 </script>
+<?php endif; ?>
+
+<!-- 発行済みリンク履歴 -->
+<?php
+$recentLinks = $db->query(
+    'SELECT il.*, rc.name AS campaign_name, rc.slug AS campaign_slug,
+            rc.is_active AS campaign_active, rc.starts_at, rc.ends_at,
+            rm.name AS member_name, rm.code AS member_code, rm.is_active AS member_active
+     FROM ref_issued_links il
+     JOIN ref_campaigns rc ON il.campaign_id = rc.id
+     JOIN ref_members rm ON il.member_id = rm.id
+     ORDER BY il.issued_at DESC
+     LIMIT 30'
+)->fetchAll();
+?>
+<?php if (!empty($recentLinks)): ?>
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <i class="bi bi-clock-history me-1"></i>発行済みリンク履歴（直近30件）
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>キャンペーン</th>
+                        <th>紹介者</th>
+                        <th>matchコード</th>
+                        <th>リンク</th>
+                        <th>状態</th>
+                        <th>発行日時</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($recentLinks as $rl):
+                        $status = Referral::getLinkStatus($rl);
+                    ?>
+                    <tr>
+                        <td><?= h($rl['campaign_name']) ?></td>
+                        <td><?= h($rl['member_name']) ?>（<code><?= h($rl['member_code']) ?></code>）</td>
+                        <td><code><?= h($rl['match_code'] ?: '-') ?></code></td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm font-monospace"
+                                   value="<?= h($rl['full_url']) ?>" readonly style="min-width:250px">
+                        </td>
+                        <td><span class="badge bg-<?= $status['color'] ?>"><?= $status['label'] ?></span></td>
+                        <td class="small"><?= date('Y/m/d H:i', strtotime($rl['issued_at'])) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <?php endif; ?>
 
 <?php include __DIR__ . '/../templates/footer.php'; ?>

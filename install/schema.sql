@@ -206,4 +206,20 @@ CREATE TABLE ref_conversions (
     INDEX idx_member (member_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 発行済み紹介リンク
+CREATE TABLE ref_issued_links (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    campaign_id INT NOT NULL,
+    member_id INT NOT NULL,
+    match_code VARCHAR(100) NOT NULL DEFAULT '',
+    full_url TEXT NOT NULL,
+    issued_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    issued_by INT NULL,
+    UNIQUE KEY uq_campaign_member_match (campaign_id, member_id, match_code),
+    FOREIGN KEY (campaign_id) REFERENCES ref_campaigns(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES ref_members(id) ON DELETE CASCADE,
+    INDEX idx_member (member_id),
+    INDEX idx_issued_at (issued_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 管理者アカウントはインストーラー（install/index.php）で作成してください
