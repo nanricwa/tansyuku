@@ -152,6 +152,82 @@ if (!empty($groupFilter)) {
 }
 $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
+// --- CSV エクスポート ---
+if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+    $csvStmt = $db->prepare(
+        "SELECT m.*,
+         (SELECT COUNT(*) FROM ref_visits WHERE member_id = m.id) AS visit_count,
+         (SELECT COUNT(*) FROM ref_visits WHERE member_id = m.id AND is_unique = 1) AS unique_count,
+         (SELECT COUNT(*) FROM ref_conversions WHERE member_id = m.id) AS cv_count,
+         (SELECT COUNT(*) FROM ref_issued_links WHERE member_id = m.id) AS issued_count
+         FROM ref_members m {$whereClause}
+         ORDER BY m.name"
+    );
+    $csvStmt->execute($params);
+    $csvMembers = $csvStmt->fetchAll();
+
+    // 発行済みリンクを一括取得（メンバーIDでグループ化）
+    $allIssuedLinks = [];
+    if (!empty($csvMembers)) {
+        $mIds = array_column($csvMembers, 'id');
+        $ph = str_repeat('?,', count($mIds) - 1) . '?';
+        $ilStmt = $db->prepare(
+            "SELECT il.member_id, il.full_url, rc.name AS campaign_name, il.match_code,
+                    rc.is_active AS campaign_active, rc.starts_at, rc.ends_at,
+                    rm.is_active AS member_active
+             FROM ref_issued_links il
+             JOIN ref_campaigns rc ON il.campaign_id = rc.id
+             JOIN ref_members rm ON il.member_id = rm.id
+             WHERE il.member_id IN ({$ph})
+             ORDER BY il.issued_at DESC"
+        );
+        $ilStmt->execute($mIds);
+        foreach ($ilStmt->fetchAll() as $il) {
+            $allIssuedLinks[$il['member_id']][] = $il;
+        }
+    }
+
+    $filename = 'referral_members_' . date('Ymd_His') . '.csv';
+    header('Content-Type: text/csv; charset=UTF-8');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    // BOM for Excel UTF-8
+    echo "\xEF\xBB\xBF";
+
+    $fp = fopen('php://output', 'w');
+    fputcsv($fp, ['名前', '紹介コード', 'メール', 'グループ', 'メモ', '状態',
+                   'アクセス', 'ユニーク', 'CV', 'CV率', '発行URL数', '発行済みURL']);
+
+    foreach ($csvMembers as $cm) {
+        $cvRate = $cm['unique_count'] > 0 ? round($cm['cv_count'] / $cm['unique_count'] * 100, 1) : 0;
+
+        // 発行済みURLをまとめる
+        $urls = [];
+        if (!empty($allIssuedLinks[$cm['id']])) {
+            foreach ($allIssuedLinks[$cm['id']] as $il) {
+                $status = Referral::getLinkStatus($il);
+                $urls[] = $il['full_url'] . ' [' . $status['label'] . ']';
+            }
+        }
+
+        fputcsv($fp, [
+            $cm['name'],
+            $cm['code'],
+            $cm['email'],
+            $cm['group_label'],
+            $cm['memo'] ?? '',
+            $cm['is_active'] ? '有効' : '無効',
+            $cm['visit_count'],
+            $cm['unique_count'],
+            $cm['cv_count'],
+            $cvRate . '%',
+            $cm['issued_count'],
+            implode("\n", $urls),
+        ]);
+    }
+    fclose($fp);
+    exit;
+}
+
 $stmt = $db->prepare("SELECT COUNT(*) FROM ref_members m {$whereClause}");
 $stmt->execute($params);
 $totalItems = (int)$stmt->fetchColumn();
@@ -255,11 +331,17 @@ include __DIR__ . '/../templates/header.php';
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-search me-1"></i>検索</button>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-search me-1"></i>検索</button>
             </div>
-            <div class="col-md-2">
-                <a href="<?= BASE_PATH ?>/admin/referral_members.php" class="btn btn-sm btn-outline-secondary w-100">リセット</a>
+            <div class="col-auto">
+                <a href="<?= BASE_PATH ?>/admin/referral_members.php" class="btn btn-sm btn-outline-secondary">リセット</a>
+            </div>
+            <div class="col-auto ms-auto">
+                <a href="?export=csv&search=<?= urlencode($search) ?>&group=<?= urlencode($groupFilter) ?>"
+                   class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-download me-1"></i>CSVダウンロード
+                </a>
             </div>
         </form>
     </div>
