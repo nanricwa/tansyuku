@@ -6,14 +6,6 @@
 <script data-cfasync="false" src="<?= BASE_PATH ?>/assets/js/bootstrap.bundle.min.js"></script>
 <script data-cfasync="false" src="<?= BASE_PATH ?>/assets/js/app.js"></script>
 <script data-cfasync="false">
-// 診断: Bootstrap読み込み確認（問題解決後に削除）
-(function(){
-    var status = (typeof bootstrap!=='undefined') ? 'BS:OK' : 'BS:NG';
-    var d=document.createElement('div');
-    d.style.cssText='position:fixed;bottom:0;right:0;background:'+(status==='BS:OK'?'green':'red')+';color:#fff;padding:4px 12px;z-index:99999;font-size:11px;opacity:0.9';
-    d.textContent=status;
-    document.body.appendChild(d);
-})();
 // Bootstrap declarative API fallback
 (function(){
     function init(){

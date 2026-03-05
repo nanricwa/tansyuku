@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $slug = trim($_POST['slug'] ?? '');
         $destinationUrl = trim($_POST['destination_url'] ?? '');
         $passParams = isset($_POST['pass_params']) ? 1 : 0;
+        $notifyOnCv = isset($_POST['notify_on_cv']) ? 1 : 0;
         $startsAt = !empty($_POST['starts_at']) ? $_POST['starts_at'] : null;
         $endsAt = !empty($_POST['ends_at']) ? $_POST['ends_at'] : null;
         $memo = trim($_POST['memo'] ?? '');
@@ -55,10 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($errors)) {
             $stmt = $db->prepare(
-                'INSERT INTO ref_campaigns (name, slug, destination_url, pass_params, starts_at, ends_at, memo)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)'
+                'INSERT INTO ref_campaigns (name, slug, destination_url, pass_params, notify_on_cv, starts_at, ends_at, memo)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
             );
-            $stmt->execute([$name, $slug, $destinationUrl, $passParams, $startsAt, $endsAt, $memo]);
+            $stmt->execute([$name, $slug, $destinationUrl, $passParams, $notifyOnCv, $startsAt, $endsAt, $memo]);
             AuditLog::log('create', 'ref_campaign', (int)$db->lastInsertId());
             setFlash('success', 'キャンペーンを追加しました。');
         } else {
@@ -71,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $slug = trim($_POST['slug'] ?? '');
         $destinationUrl = trim($_POST['destination_url'] ?? '');
         $passParams = isset($_POST['pass_params']) ? 1 : 0;
+        $notifyOnCv = isset($_POST['notify_on_cv']) ? 1 : 0;
         $isActive = isset($_POST['is_active']) ? 1 : 0;
         $startsAt = !empty($_POST['starts_at']) ? $_POST['starts_at'] : null;
         $endsAt = !empty($_POST['ends_at']) ? $_POST['ends_at'] : null;
@@ -84,10 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setFlash('danger', 'このスラッグは既に使用されています。');
             } else {
                 $stmt = $db->prepare(
-                    'UPDATE ref_campaigns SET name=?, slug=?, destination_url=?, pass_params=?,
+                    'UPDATE ref_campaigns SET name=?, slug=?, destination_url=?, pass_params=?, notify_on_cv=?,
                      is_active=?, starts_at=?, ends_at=?, memo=? WHERE id=?'
                 );
-                $stmt->execute([$name, $slug, $destinationUrl, $passParams, $isActive, $startsAt, $endsAt, $memo, $id]);
+                $stmt->execute([$name, $slug, $destinationUrl, $passParams, $notifyOnCv, $isActive, $startsAt, $endsAt, $memo, $id]);
                 AuditLog::log('update', 'ref_campaign', $id);
                 setFlash('success', 'キャンペーンを更新しました。');
             }
@@ -165,13 +167,19 @@ $baseUrl = Database::getSetting('base_url', 'https://example.com/intro');
                         <label class="form-label">終了日時</label>
                         <input type="datetime-local" class="form-control" name="ends_at">
                     </div>
-                    <div class="col-md-3 d-flex align-items-end">
+                    <div class="col-md-2 d-flex align-items-end">
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="pass_params" value="1" checked>
-                            <label class="form-check-label">パラメータを転送先に渡す</label>
+                            <label class="form-check-label small">パラメータ渡し</label>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="notify_on_cv" value="1">
+                            <label class="form-check-label small">成約通知メール</label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <label class="form-label">メモ</label>
                         <input type="text" class="form-control" name="memo">
                     </div>
@@ -330,12 +338,21 @@ $baseUrl = Database::getSetting('base_url', 'https://example.com/intro');
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="notify_on_cv" value="1"
+                                   <?= ($c['notify_on_cv'] ?? 0) ? 'checked' : '' ?>>
+                            <label class="form-check-label small">成約通知メール</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="is_active" value="1"
                                    <?= $c['is_active'] ? 'checked' : '' ?>>
                             <label class="form-check-label small">有効</label>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <label class="form-label">メモ</label>
                         <input type="text" class="form-control" name="memo" value="<?= h($c['memo']) ?>">
                     </div>

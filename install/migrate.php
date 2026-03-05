@@ -218,6 +218,17 @@ if ((int)$stmt->fetchColumn() === 0) {
 }
 
 // =============================================================================
+// Migration 003: 成約通知メール機能
+// =============================================================================
+
+if (!columnExists($db, 'ref_campaigns', 'notify_on_cv')) {
+    $db->exec("ALTER TABLE ref_campaigns ADD COLUMN notify_on_cv TINYINT(1) NOT NULL DEFAULT 0 AFTER memo");
+    $results[] = '✅ ref_campaigns.notify_on_cv を追加しました';
+} else {
+    $results[] = '⏭ ref_campaigns.notify_on_cv は既に存在します';
+}
+
+// =============================================================================
 // 出力
 // =============================================================================
 

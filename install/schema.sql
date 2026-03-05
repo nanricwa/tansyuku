@@ -150,6 +150,7 @@ CREATE TABLE ref_campaigns (
     starts_at DATETIME NULL,
     ends_at DATETIME NULL,
     memo TEXT,
+    notify_on_cv TINYINT(1) NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

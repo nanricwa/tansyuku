@@ -33,7 +33,9 @@ if (!empty($campaignSlug)) {
     $campaign = $stmt->fetch();
 
     if ($campaign) {
-        recordRefConversion($db, (int)$campaign['id'], $ip, $ua);
+        if (recordRefConversion($db, (int)$campaign['id'], $ip, $ua)) {
+            notifyMemberIfEnabled($db, (int)$campaign['id'], $ip, $ua);
+        }
     }
 } else {
     // 共通モード: IP+UAから直近の紹介訪問を検索
@@ -53,9 +55,10 @@ if (!empty($campaignSlug)) {
         if (isset($processedCampaigns[$cid])) continue;
         $processedCampaigns[$cid] = true;
 
-        recordRefConversion($db, $cid, $ip, $ua,
-            (int)$visit['visit_id'],
-            $visit['member_id'] ? (int)$visit['member_id'] : null);
+        $mid = $visit['member_id'] ? (int)$visit['member_id'] : null;
+        if (recordRefConversion($db, $cid, $ip, $ua, (int)$visit['visit_id'], $mid)) {
+            notifyMemberIfEnabled($db, $cid, $ip, $ua, $mid);
+        }
     }
 }
 
@@ -112,6 +115,66 @@ function outputRefResponse(string $format): void
         header('Content-Type: image/gif');
         echo base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
     }
+}
+
+/**
+ * 成約通知メール送信（キャンペーンでnotify_on_cvが有効な場合のみ）
+ */
+function notifyMemberIfEnabled(PDO $db, int $campaignId, string $ip, string $ua, ?int $memberId = null): void
+{
+    // キャンペーンの通知設定を確認
+    $stmt = $db->prepare('SELECT name, notify_on_cv FROM ref_campaigns WHERE id = ?');
+    $stmt->execute([$campaignId]);
+    $campaign = $stmt->fetch();
+
+    if (!$campaign || !$campaign['notify_on_cv']) {
+        return;
+    }
+
+    // メンバー特定（引数で渡されなかった場合はIP+UAから検索）
+    if ($memberId === null) {
+        $stmt = $db->prepare(
+            'SELECT member_id FROM ref_visits
+             WHERE campaign_id = ? AND ip_address = ? AND user_agent = ?
+             AND visited_at > DATE_SUB(NOW(), INTERVAL 72 HOUR)
+             ORDER BY visited_at DESC LIMIT 1'
+        );
+        $stmt->execute([$campaignId, $ip, $ua]);
+        $memberId = $stmt->fetchColumn() ?: null;
+    }
+
+    if (!$memberId) {
+        return;
+    }
+
+    // メンバー情報取得
+    $stmt = $db->prepare('SELECT name, email FROM ref_members WHERE id = ?');
+    $stmt->execute([$memberId]);
+    $member = $stmt->fetch();
+
+    if (!$member || empty($member['email'])) {
+        return;
+    }
+
+    // 累計成約数
+    $stmt = $db->prepare('SELECT COUNT(*) FROM ref_conversions WHERE member_id = ? AND campaign_id = ?');
+    $stmt->execute([$memberId, $campaignId]);
+    $totalCv = (int)$stmt->fetchColumn();
+
+    // メール送信
+    $to = $member['email'];
+    $subject = '【' . $campaign['name'] . '】紹介成約のお知らせ';
+    $body = $member['name'] . " 様\n\n"
+        . "あなたの紹介から成約がありました。\n\n"
+        . "キャンペーン: " . $campaign['name'] . "\n"
+        . "成約日時: " . date('Y/m/d H:i') . "\n"
+        . "累計成約数: " . $totalCv . "件\n\n"
+        . "引き続きよろしくお願いいたします。\n";
+
+    $headers = "From: noreply@" . ($_SERVER['SERVER_NAME'] ?? 'example.com') . "\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n";
+
+    @mb_send_mail($to, $subject, $body, $headers);
 }
 
 function getClientIp(): string
