@@ -240,6 +240,9 @@ function sortLink(string $column, string $label): string
                             $baseUrl = Database::getSetting('base_url', 'https://example.com/intro');
                             $cvTag = '<img src="' . $baseUrl . '/cv.php" width="1" height="1" style="display:none" alt="">';
                             ?>
+                            <button class="btn btn-outline-dark" onclick="showQR('<?= h($shortUrl) ?>')" title="QRコード">
+                                <i class="bi bi-qr-code"></i>
+                            </button>
                             <button class="btn btn-outline-warning btn-copy" data-copy="<?= h($cvTag) ?>" title="共通CVタグをコピー">
                                 <i class="bi bi-tag"></i>
                             </button>

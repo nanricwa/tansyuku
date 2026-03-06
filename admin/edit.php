@@ -162,6 +162,9 @@ include __DIR__ . '/../templates/header.php';
             <button class="btn btn-outline-secondary btn-copy" type="button" data-copy="<?= h($shortUrl) ?>">
                 <i class="bi bi-clipboard"></i>
             </button>
+            <button class="btn btn-outline-dark" type="button" onclick="showQR('<?= h($shortUrl) ?>')">
+                <i class="bi bi-qr-code"></i>
+            </button>
         </div>
         <?php endforeach; ?>
     </div>
