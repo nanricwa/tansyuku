@@ -497,6 +497,7 @@ include __DIR__ . '/../templates/header.php';
                                 <th>リンク</th>
                                 <th>状態</th>
                                 <th>発行日</th>
+                                <th style="width:40px"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -512,6 +513,11 @@ include __DIR__ . '/../templates/header.php';
                                 </td>
                                 <td><span class="badge bg-<?= $status['color'] ?>"><?= $status['label'] ?></span></td>
                                 <td class="small"><?= date('Y/m/d', strtotime($il['issued_at'])) ?></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-dark" onclick="showQR('<?= h($il['full_url']) ?>')">
+                                        <i class="bi bi-qr-code"></i>
+                                    </button>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>

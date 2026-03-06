@@ -145,7 +145,7 @@ include __DIR__ . '/../templates/header.php';
                         <th>コード</th>
                         <th>メール</th>
                         <th>紹介リンク</th>
-                        <th style="width:60px"></th>
+                        <th style="width:90px"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -158,9 +158,12 @@ include __DIR__ . '/../templates/header.php';
                             <input type="text" class="form-control form-control-sm font-monospace generated-link"
                                    value="<?= h($link['url']) ?>" readonly>
                         </td>
-                        <td>
+                        <td class="text-nowrap">
                             <button class="btn btn-sm btn-outline-primary btn-copy" data-copy="<?= h($link['url']) ?>">
                                 <i class="bi bi-clipboard"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-dark" onclick="showQR('<?= h($link['url']) ?>')">
+                                <i class="bi bi-qr-code"></i>
                             </button>
                         </td>
                     </tr>
@@ -228,6 +231,7 @@ $recentLinks = $db->query(
                         <th>リンク</th>
                         <th>状態</th>
                         <th>発行日時</th>
+                        <th style="width:40px"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -244,6 +248,11 @@ $recentLinks = $db->query(
                         </td>
                         <td><span class="badge bg-<?= $status['color'] ?>"><?= $status['label'] ?></span></td>
                         <td class="small"><?= date('Y/m/d H:i', strtotime($rl['issued_at'])) ?></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-dark" onclick="showQR('<?= h($rl['full_url']) ?>')">
+                                <i class="bi bi-qr-code"></i>
+                            </button>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
