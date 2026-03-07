@@ -5,10 +5,10 @@
  * 紹介経由で来た人が成約ページに到達したことを記録する。
  *
  * 使い方（共通タグ）:
- *   <img src="https://ycscampaign.com/intro/ref_cv.php" width="1" height="1" style="display:none">
+ *   <img src="https://ycscampaign.com/r/ref_cv.php" width="1" height="1" style="display:none">
  *
  * 使い方（キャンペーン指定）:
- *   <img src="https://ycscampaign.com/intro/ref_cv.php?campaign=fjbA1" width="1" height="1" style="display:none">
+ *   <img src="https://ycscampaign.com/r/ref_cv.php?campaign=fjbA1" width="1" height="1" style="display:none">
  */
 
 require_once __DIR__ . '/config.php';

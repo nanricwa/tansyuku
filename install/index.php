@@ -182,7 +182,7 @@ mb_internal_encoding('UTF-8');
                 <div class="mb-3">
                     <label class="form-label">ベースURL <span class="text-danger">*</span></label>
                     <input type="url" class="form-control" name="base_url"
-                           value="<?= htmlspecialchars($_POST['base_url'] ?? 'https://ycscampaign.com/intro') ?>"
+                           value="<?= htmlspecialchars($_POST['base_url'] ?? 'https://ycscampaign.com/r') ?>"
                            placeholder="https://example.com/url" required>
                     <div class="form-text">短縮URLのベースとなるURL（末尾スラッシュなし）</div>
                 </div>

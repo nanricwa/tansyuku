@@ -1,20 +1,20 @@
 RewriteEngine On
-RewriteBase /intro/
+RewriteBase /r/
 
 # 管理画面・静的ファイル・APIはそのまま通す
-RewriteCond %{REQUEST_URI} ^/intro/admin/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/api/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/assets/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/includes/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/templates/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/vendor/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/install/ [OR]
-RewriteCond %{REQUEST_URI} ^/intro/cv\.php [OR]
-RewriteCond %{REQUEST_URI} ^/intro/ref_cv\.php
+RewriteCond %{REQUEST_URI} ^/r/admin/ [OR]
+RewriteCond %{REQUEST_URI} ^/r/api/ [OR]
+RewriteCond %{REQUEST_URI} ^/r/assets/ [OR]
+RewriteCond %{REQUEST_URI} ^/r/includes/ [OR]
+RewriteCond %{REQUEST_URI} ^/r/templates/ [OR]
+RewriteCond %{REQUEST_URI} ^/r/vendor/ [OR]
+RewriteCond %{REQUEST_URI} ^/r/install/ [OR]
+RewriteCond %{REQUEST_URI} ^/r/cv\.php [OR]
+RewriteCond %{REQUEST_URI} ^/r/ref_cv\.php
 RewriteRule ^ - [L]
 
-# 紹介リダイレクト: /r/SLUG → ref.php?campaign=SLUG
-RewriteRule ^r/([a-zA-Z0-9_-]+)/?$ ref.php?campaign=$1 [L,QSA]
+# 紹介リダイレクト: /ref/SLUG → ref.php?campaign=SLUG
+RewriteRule ^ref/([a-zA-Z0-9_-]+)/?$ ref.php?campaign=$1 [L,QSA]
 
 # 実ファイル/ディレクトリが存在する場合はそのまま
 RewriteCond %{REQUEST_FILENAME} -f [OR]

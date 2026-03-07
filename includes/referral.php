@@ -71,7 +71,7 @@ class Referral
         // 署名を付与
         $params['sig'] = self::generateSignature($params);
 
-        return $baseUrl . '/r/' . $campaignSlug . '?' . http_build_query($params);
+        return $baseUrl . '/ref/' . $campaignSlug . '?' . http_build_query($params);
     }
 
     /**

@@ -5,14 +5,14 @@
  * 成約ページにこのURLを指すタグを設置することで、成約を自動記録する。
  *
  * ■ 共通タグ（推奨）- slug不要。IP+UAから直近クリックを自動特定:
- *   <img src="https://example.com/intro/cv.php" width="1" height="1" style="display:none">
+ *   <img src="https://example.com/r/cv.php" width="1" height="1" style="display:none">
  *   → 複数チャネル（短縮URL）から同じサンクスページに来る場合、タグ1個でOK
  *
  * ■ 個別タグ - 特定の短縮URLのみ計測:
- *   <img src="https://example.com/intro/cv.php?slug=xxx" width="1" height="1" style="display:none">
+ *   <img src="https://example.com/r/cv.php?slug=xxx" width="1" height="1" style="display:none">
  *
  * ■ JavaScript方式:
- *   <script src="https://example.com/intro/cv.php?format=js"></script>
+ *   <script src="https://example.com/r/cv.php?format=js"></script>
  *
  * パラメータ:
  *   slug   = 短縮URLのスラッグ（省略時: 直近クリックから自動判定）

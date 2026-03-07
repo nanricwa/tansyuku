@@ -3,7 +3,7 @@
  * マイグレーション実行スクリプト
  * 既存DBに対してスキーマ変更を適用する
  *
- * ブラウザからアクセス: https://example.com/intro/install/migrate.php
+ * ブラウザからアクセス: https://example.com/r/install/migrate.php
  * CLI: php install/migrate.php
  */
 

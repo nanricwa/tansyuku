@@ -202,7 +202,7 @@ $baseUrl = Database::getSetting('base_url', 'https://example.com/intro');
 <?php foreach ($campaigns as $c):
     $stats = $campaignStats[$c['id']];
     $isExpired = $c['ends_at'] && strtotime($c['ends_at']) < time();
-    $refUrl = $baseUrl . '/r/' . $c['slug'];
+    $refUrl = $baseUrl . '/ref/' . $c['slug'];
 ?>
 <div class="card mb-3 <?= !$c['is_active'] ? 'border-secondary opacity-75' : ($isExpired ? 'border-warning' : '') ?>">
     <div class="card-header d-flex justify-content-between align-items-center">
