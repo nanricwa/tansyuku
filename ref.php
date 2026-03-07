@@ -2,7 +2,7 @@
 /**
  * 紹介リダイレクト処理
  *
- * URL形式: /r/CAMPAIGN_SLUG?intro=CODE&match=XXX&sig=XXXX
+ * URL形式: /ref/CAMPAIGN_SLUG?intro=CODE&match=XXX&sig=XXXX
  *
  * 1. パラメータを記録（紹介者、マッチ、デバイス等）
  * 2. キャンペーンの転送先URLにリダイレクト
